@@ -1,0 +1,53 @@
+﻿@page "/"
+
+<PageTitle>Aggregate</PageTitle>
+
+<h1>Multi-binding with Aggregate</h1>
+
+<p>
+	@* Using Aggregate in a member variable so that editing can be disabled when values are not equal *@
+	Name:
+	<input type="text" @bind-value="AggregatedName.Value" disabled="@(!AggregatedName.Equal)" />
+</p>
+
+<p>
+	@* Using Aggregate inline for maximum simplicity (though this particular example is a little annoying since it shows "0" when ages don't match) *@
+	Age:
+	<input type="number" @bind-value="@(new Aggregate<Person, int>(people, person => person.Age, (person, value) => person.Age = value, 0).Value)" />
+</p>
+
+<p>
+	@* Using Aggregate in a member variable so that Equal can be checked for setting other properties (placeholder) *@
+	Country:
+	<input type="text" @bind-value="AggregatedCountry.Value" placeholder="@(AggregatedCountry.Equal ? string.Empty : "(Multiple locations)")" />
+</p>
+
+<h1>Ye olde people database</h1>
+<p>
+	The fields above are each bound to <em>all</em> of these objects:
+</p>
+<ul>
+	@foreach (var person in people)
+	{
+		<li><strong>@person.Name</strong>, age @person.Age (@(person.Country ?? "unknown location"))</li>
+	}
+</ul>
+
+@code
+{
+	private readonly Person[] people = new Person[]
+	{
+		new() { Name = "Archibald", Age = 58 },
+		new() { Name = "Benedict", Age = 34 },
+		new() { Name = "Charon", Age = 6101, Country = "Hades" },
+		new() { Name = "Dennis", Age = 23 },
+		new() { Name = "Eowyn", Age = 27, Country = "Rohan" },
+	};
+
+	private class Person
+	{
+		public string Name { get; set; } = string.Empty;
+		public int Age { get; set; } = 0;
+		public string? Country { get; set; }
+	}
+}
