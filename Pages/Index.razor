@@ -22,6 +22,27 @@
 	<input type="text" @bind-value="AggregatedCountry.Value" placeholder="@(AggregatedCountry.Equal ? string.Empty : "(Multiple locations)")" />
 </p>
 
+<h1>Multi-binding with wrapper component</h1>
+
+<p>
+	@* Using MultiTextbox with IsEditableInConflict=false *@
+	Name:
+	<MultiTextbox @ref="_name" TItem="Person" Items="people" GetValue="item => item.Name" SetValue="(item, value) => item.Name = value" ConflictValue="(Multiple names)" IsEditableInConflict="false" />
+</p>
+<p>
+	@* Using MultiTextbox and integer conversion *@
+	Age:
+	<MultiTextbox @ref="_age" TItem="Person" Items="people" GetValue="item => item.Age.ToString()" SetValue="(item, value) => { if (int.TryParse(value, out int age)) item.Age = age; }" />
+</p>
+<p>
+	@* Using MultiTextbox *@
+	Country:
+	<MultiTextbox @ref="_country" TItem="Person" Items="people" GetValue="item => item.Country" SetValue="(item, value) => item.Country = value" ConflictValue="(Multiple locations)" />
+</p>
+<p>
+	<button @onclick="CommitChanges">Commit changes</button>
+</p>
+
 <h1>Ye olde people database</h1>
 <p>
 	The fields above are each bound to <em>all</em> of these objects:
@@ -35,6 +56,17 @@
 
 @code
 {
+	MultiTextbox<Person>? _name;
+	MultiTextbox<Person>? _age;
+	MultiTextbox<Person>? _country;
+
+	private void CommitChanges()
+	{
+		_name?.CommitChanges();
+		_age?.CommitChanges();
+		_country?.CommitChanges();
+	}
+
 	private readonly Person[] people = new Person[]
 	{
 		new() { Name = "Archibald", Age = 58 },

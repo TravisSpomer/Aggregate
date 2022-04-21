@@ -1,0 +1,23 @@
+﻿@typeparam TItem where TItem : class
+@inherits MultiEditor<TItem, string>
+
+<input type="text" @bind-value="Value" disabled="@(IsEditableInConflict ? false : IsInConflict)" placeholder="@(IsInConflict ? ConflictValue : "")" />
+
+@code
+{
+	private string? _value;
+
+	public override string? Value
+	{
+		get
+		{
+			return _value;
+		}
+		protected set
+		{
+			if (_value == value) return;
+			_value = value;
+			HasChanged = true;
+		}
+	}
+}
