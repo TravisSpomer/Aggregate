@@ -8,6 +8,9 @@ namespace Aggregate
 		private IReadOnlyList<TItem>? _items;
 		private Func<TItem, TValue>? _getter;
 		private Action<TItem, TValue?>? _setter;
+		private TValue? _value;
+
+		// TODO: Add validation support
 
 		[Parameter]
 		public IReadOnlyList<TItem>? Items
@@ -24,7 +27,19 @@ namespace Aggregate
 			}
 		}
 
-		public virtual TValue? Value { get; protected set; }
+		public TValue? Value
+		{
+			get
+			{
+				return _value;
+			}
+			protected set
+			{
+				if ((_value is null && value is null) || (value is not null && _value is not null && value.Equals(_value))) return;
+				_value = value;
+				HasChanged = true;
+			}
+		}
 
 		[Parameter]
 		public Func<TItem, TValue>? GetValue

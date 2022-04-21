@@ -5,19 +5,4 @@
 
 @code
 {
-	private string? _value;
-
-	public override string? Value
-	{
-		get
-		{
-			return _value;
-		}
-		protected set
-		{
-			if (_value == value) return;
-			_value = value;
-			HasChanged = true;
-		}
-	}
 }
