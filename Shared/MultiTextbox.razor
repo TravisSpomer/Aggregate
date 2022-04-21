@@ -1,7 +1,7 @@
 ﻿@typeparam TItem where TItem : class
 @inherits MultiEditor<TItem, string>
 
-<input type="text" @bind-value="Value" disabled="@(IsEditableInConflict ? false : IsInConflict)" placeholder="@(IsInConflict ? ConflictValue : "")" />
+<InputText @bind-Value="Value" disabled="@(IsEditableInConflict ? false : IsInConflict)" placeholder="@(IsInConflict ? ConflictValue : "")" />
 
 @code
 {

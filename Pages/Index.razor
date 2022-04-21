@@ -24,6 +24,8 @@
 
 <h1>Multi-binding with wrapper component</h1>
 
+<EditForm EditContext="_context">
+
 <p>
 	@* Using MultiTextbox with IsEditableInConflict=false *@
 	Name:
@@ -43,6 +45,8 @@
 	<button @onclick="CommitChanges">Commit changes</button>
 </p>
 
+</EditForm>
+
 <h1>Ye olde people database</h1>
 <p>
 	The fields above are each bound to <em>all</em> of these objects:
@@ -56,6 +60,8 @@
 
 @code
 {
+	EditContext _context = new(new object()); // required for EditForm and InputText
+
 	MultiTextbox<Person>? _name;
 	MultiTextbox<Person>? _age;
 	MultiTextbox<Person>? _country;
