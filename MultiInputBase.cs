@@ -2,7 +2,7 @@
 
 namespace Aggregate
 {
-	public abstract class MultiEditor<TItem, TValue> : ComponentBase where TItem : class
+	public abstract class MultiInputBase<TItem, TValue> : ComponentBase where TItem : class
 	{
 		protected bool _isInitialized = false;
 		private IReadOnlyList<TItem>? _items;

@@ -27,19 +27,19 @@
 <EditForm Model="people">
 
 <p>
-	@* Using MultiTextbox with IsEditableInConflict=false *@
+	@* Using MultiInputText with IsEditableInConflict=false *@
 	Name:
-	<MultiTextbox @ref="_name" TItem="Person" Items="people" GetValue="item => item.Name" SetValue="(item, value) => item.Name = value" ConflictValue="(Multiple names)" IsEditableInConflict="false" />
+	<MultiInputText @ref="_name" TItem="Person" Items="people" GetValue="item => item.Name" SetValue="(item, value) => item.Name = value" ConflictValue="(Multiple names)" IsEditableInConflict="false" />
 </p>
 <p>
-	@* Using MultiTextbox and integer conversion *@
+	@* Using MultiInputText and integer conversion *@
 	Age:
-	<MultiTextbox @ref="_age" TItem="Person" Items="people" GetValue="item => item.Age.ToString()" SetValue="(item, value) => { if (int.TryParse(value, out int age)) item.Age = age; }" />
+	<MultiInputText @ref="_age" TItem="Person" Items="people" GetValue="item => item.Age.ToString()" SetValue="(item, value) => { if (int.TryParse(value, out int age)) item.Age = age; }" />
 </p>
 <p>
-	@* Using MultiTextbox *@
+	@* Using MultiInputText *@
 	Country:
-	<MultiTextbox @ref="_country" TItem="Person" Items="people" GetValue="item => item.Country" SetValue="(item, value) => item.Country = value" ConflictValue="(Multiple locations)" />
+	<MultiInputText @ref="_country" TItem="Person" Items="people" GetValue="item => item.Country" SetValue="(item, value) => item.Country = value" ConflictValue="(Multiple locations)" />
 </p>
 <p>
 	<button @onclick="CommitChanges">Commit changes</button>
@@ -60,9 +60,9 @@
 
 @code
 {
-	MultiTextbox<Person>? _name;
-	MultiTextbox<Person>? _age;
-	MultiTextbox<Person>? _country;
+	MultiInputText<Person>? _name;
+	MultiInputText<Person>? _age;
+	MultiInputText<Person>? _country;
 
 	private void CommitChanges()
 	{
