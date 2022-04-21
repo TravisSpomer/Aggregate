@@ -1,4 +1,4 @@
 ﻿@typeparam TItem where TItem : class
 @inherits MultiInputBase<TItem, string>
 
-<InputText @bind-Value="Value" disabled="@(IsEditableInConflict ? false : IsInConflict)" placeholder="@(IsInConflict ? ConflictValue : "")" />
+<InputText @bind-Value="Value" disabled="@(IsInConflict ? !IsEditableInConflict : false)" placeholder="@(IsInConflict ? ConflictValue : "")" />
