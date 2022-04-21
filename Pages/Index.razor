@@ -24,7 +24,7 @@
 
 <h1>Multi-binding with wrapper component</h1>
 
-<EditForm EditContext="_context">
+<EditForm Model="people">
 
 <p>
 	@* Using MultiTextbox with IsEditableInConflict=false *@
@@ -60,8 +60,6 @@
 
 @code
 {
-	EditContext _context = new(new object()); // required for EditForm and InputText
-
 	MultiTextbox<Person>? _name;
 	MultiTextbox<Person>? _age;
 	MultiTextbox<Person>? _country;

@@ -2,7 +2,3 @@
 @inherits MultiEditor<TItem, string>
 
 <InputText @bind-Value="Value" disabled="@(IsEditableInConflict ? false : IsInConflict)" placeholder="@(IsInConflict ? ConflictValue : "")" />
-
-@code
-{
-}
