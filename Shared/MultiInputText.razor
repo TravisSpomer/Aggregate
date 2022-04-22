@@ -2,3 +2,23 @@
 @inherits MultiInputBase<TItem, string>
 
 <InputText @bind-Value="Value" disabled="@(IsInConflict ? !IsEditableInConflict : false)" placeholder="@(IsInConflict ? ConflictValue : "")" />
+<ul>
+	@foreach (var error in Errors)
+	{
+		<li>@error</li>
+	}
+</ul>
+
+@code
+{
+	[Parameter] public string? Required { get; set; }
+
+	protected override void Validate()
+	{
+		if (Required is not null)
+		{
+			if (string.IsNullOrEmpty(Value))
+				ValidationError(Required);
+		}
+	}
+}

@@ -24,26 +24,29 @@
 
 <h1>Multi-binding with wrapper component</h1>
 
-<EditForm Model="people">
+<EditForm Model="people" OnValidSubmit="CommitChanges">
 
 <p>
 	@* Using MultiInputText with IsEditableInConflict=false *@
 	Name:
-	<MultiInputText @ref="_name" TItem="Person" Items="people" GetValue="item => item.Name" SetValue="(item, value) => item.Name = value" ConflictValue="(Multiple names)" IsEditableInConflict="false" />
+	<MultiInputText @ref="_name" TItem="Person" Items="people" FieldName="Name" GetValue="item => item.Name" SetValue="(item, value) => item.Name = value" ConflictValue="(Multiple names)" IsEditableInConflict="false" Required="A name is required." />
 </p>
 <p>
-	@* Using MultiInputText and integer conversion *@
+	@* Using MultiInputInteger *@
 	Age:
-	<MultiInputText @ref="_age" TItem="Person" Items="people" GetValue="item => item.Age.ToString()" SetValue="(item, value) => { if (int.TryParse(value, out int age)) item.Age = age; }" />
+	<MultiInputInteger @ref="_age" TItem="Person" Items="people" FieldName="Age" GetValue="item => item.Age" SetValue="(item, value) => item.Age = value" ConflictString="(Multiple ages)" Required="Age is required and must be a number." />
 </p>
 <p>
 	@* Using MultiInputText *@
 	Country:
-	<MultiInputText @ref="_country" TItem="Person" Items="people" GetValue="item => item.Country" SetValue="(item, value) => item.Country = value" ConflictValue="(Multiple locations)" />
+	<MultiInputText @ref="_country" TItem="Person" Items="people" FieldName="Country" GetValue="item => item.Country" SetValue="(item, value) => item.Country = value" ConflictValue="(Multiple locations)" Required="A country is required." />
 </p>
 <p>
-	<button @onclick="CommitChanges">Commit changes</button>
+	<ValidationSummary Model="people" />
 </p>
+<p>
+	<input type="submit" value="Commit changes" />
+</p>	
 
 </EditForm>
 
@@ -61,7 +64,7 @@
 @code
 {
 	MultiInputText<Person>? _name;
-	MultiInputText<Person>? _age;
+	MultiInputInteger<Person>? _age;
 	MultiInputText<Person>? _country;
 
 	private void CommitChanges()

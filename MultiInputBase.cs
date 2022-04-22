@@ -1,16 +1,45 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Aggregate
 {
 	public abstract class MultiInputBase<TItem, TValue> : ComponentBase where TItem : class
 	{
 		protected bool _isInitialized = false;
+		protected EditContext? _editContext;
+
 		private IReadOnlyList<TItem>? _items;
+		private string? _fieldName;
 		private Func<TItem, TValue>? _getter;
 		private Action<TItem, TValue?>? _setter;
 		private TValue? _value;
 
-		// TODO: Add validation support
+		private FieldIdentifier? _fieldIdentifier;
+		private ValidationMessageStore? _errors;
+
+		[CascadingParameter]
+		private EditContext? CurrentEditContext
+		{
+			get
+			{
+				return _editContext;
+			}
+			set
+			{
+				if (_editContext == value) return;
+				if (_editContext is not null)
+				{
+					_editContext.OnValidationRequested -= OnValidationRequested;
+					_errors = null;
+				}
+				_editContext = value;
+				if (_editContext is not null)
+				{
+					_editContext.OnValidationRequested += OnValidationRequested;
+					_errors = new(_editContext);
+				}
+			}
+		}
 
 		[Parameter]
 		public IReadOnlyList<TItem>? Items
@@ -23,6 +52,21 @@ namespace Aggregate
 			{
 				if (_items == value) return;
 				_items = value;
+				OnSourceDataChanged();
+			}
+		}
+
+		[Parameter]
+		public string? FieldName
+		{
+			get
+			{
+				return _fieldName;
+			}
+			set
+			{
+				if (_fieldName == value) return;
+				_fieldName = value;
 				OnSourceDataChanged();
 			}
 		}
@@ -96,15 +140,18 @@ namespace Aggregate
 
 		private void OnSourceDataChanged()
 		{
-			// Both Items and GetValue must be set before we can do anything.
-			if (_items is null || _getter is null)
+			// Multiple properties must be set before we can do anything.
+			if (_items is null || _getter is null || _fieldName is null)
 			{
 				_isInitialized = false;
+				_fieldIdentifier = null;
 				IsInConflict = false;
 				HasChanged = false;
 				Value = default;
 				return;
 			}
+
+			_fieldIdentifier = new FieldIdentifier(_items, _fieldName);
 
 			// If there are no items, we don't need to do anything.
 			if (_items.Count == 0)
@@ -138,5 +185,46 @@ namespace Aggregate
 			HasChanged = false;
 			_isInitialized = true;
 		}
+
+		private void OnValidationRequested(object? _sender, ValidationRequestedEventArgs _e)
+		{
+			// Validation doesn't work outside of an EditForm.
+			if (!_isInitialized || _items is null || CurrentEditContext is null || _errors is null || _fieldIdentifier is null) return;
+			if (FieldName is null) throw new InvalidOperationException("FieldName must not be null.");
+
+			_errors.Clear();
+
+			// Validation doesn't work when there are multiple items selected in conflict.
+			// Otherwise, do normal validation.
+			if (!IsInConflict)
+			{
+				Validate();
+				// ValidationError("I'm always broken");
+			}
+
+			CurrentEditContext.NotifyValidationStateChanged();
+		}
+
+		protected virtual void Validate()
+		{
+			// Subclasses can use this to perform additional validation before the user-supplied validation.
+			// (For example, a number field can verify that it's a valid number.)
+		}
+
+		protected void ValidationError(string message)
+		{
+			if (_errors is null || _fieldIdentifier is null) return;
+			_errors.Add((FieldIdentifier)_fieldIdentifier, message);
+		}
+
+		protected IEnumerable<string> Errors
+		{
+			get
+			{
+				if (_errors is null || _fieldIdentifier is null) return Enumerable.Empty<string>();
+				return _errors[(FieldIdentifier)_fieldIdentifier];
+			}
+		}
+
 	}
 }

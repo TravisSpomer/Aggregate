@@ -1,0 +1,38 @@
+﻿@typeparam TItem where TItem : class
+@inherits MultiInputBase<TItem, int>
+
+<InputText @bind-Value="StringValue" type="number" disabled="@(IsInConflict ? !IsEditableInConflict : false)" placeholder="@(IsInConflict && ConflictString is not null ? ConflictString : "")" />
+<ul>
+	@foreach (var error in Errors)
+	{
+		<li>@error</li>
+	}
+</ul>
+
+@code
+{
+	bool _isValid;
+
+	[Parameter] public string? ConflictString { get; set; }
+	[Parameter] public string Required { get; set; }
+
+	public string StringValue
+	{
+		get
+		{
+			return IsInConflict ? string.Empty : Value.ToString();
+		}
+		set
+		{
+			int parsed = default;
+			if (_isValid = !string.IsNullOrEmpty(value) && int.TryParse(value, out parsed))
+				Value = parsed;
+		}
+	}
+
+	protected override void Validate()
+	{
+		if (!_isValid)
+			ValidationError(Required);
+	}
+}
